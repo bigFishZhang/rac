@@ -1,0 +1,12 @@
+# Uncomment the next line to define a global platform for your project
+ platform :ios, '9.3'
+ use_frameworks!
+
+target 'Rac' do
+    pod 'ReactiveObjC'
+  # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
+
+
+  # Pods for Rac
+
+end
