@@ -9,6 +9,8 @@
 #import "ViewController.h"
 #import "TestView.h"
 #import <ReactiveObjC/ReactiveObjC.h>
+#import "FlagItem.h"
+
 @interface ViewController ()
 
 @end
@@ -60,6 +62,7 @@
     NSLog(@"2 signal subscribeNext");
     [signal subscribeNext:^(id  _Nullable x) {
         NSLog(@"4 subscribeNext");
+        NSLog(@"subscribeNext thread %@",[NSThread currentThread]);
     }];
     
     [signal subscribeError:^(NSError * _Nullable error) {
@@ -78,8 +81,10 @@
     }];
     
     
-    [self test];
-    
+//    [self test];
+//    [self test2];
+//    [self test3];
+    [self test4];
     // Do any additional setup after loading the view.
 }
 
@@ -95,6 +100,7 @@
     //生成多个RACSubscriber监听者 放到一个数组中 存储对应的block
     [subject subscribeNext:^(id  _Nullable x) {
         NSLog(@"第一个订阅者 %@",x);
+        NSLog(@"subscribeNext thread %@",[NSThread currentThread]);
         [subject sendCompleted];
     } error:^(NSError * _Nullable error) {
         NSLog(@"第二个订阅者 %@",error);
@@ -104,6 +110,7 @@
     //遍历数组发送消息
     [subject sendNext:@2];
     NSLog(@"RACSubject 2");
+    
 }
 
 - (void)test2 {
@@ -119,7 +126,7 @@
     
     [replaySubject subscribeNext:^(id  _Nullable x) {
         NSLog(@"第一个订阅者 %@",x);
-       
+        NSLog(@"subscribeNext thread %@",[NSThread currentThread]);
     } error:^(NSError * _Nullable error) {
         NSLog(@"第二个订阅者 %@",error);
          [replaySubject sendCompleted];
@@ -128,5 +135,48 @@
     }];
 }
 
+
+- (void)test3 {
+    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"flags.plist" ofType:nil];
+    NSArray *datas = [NSArray arrayWithContentsOfFile:filePath];
+    
+    
+    //遍历数组的时候 block 里面是子线程
+    NSMutableArray * items = [[NSMutableArray alloc] init];
+    
+    [datas.rac_sequence.signal subscribeNext:^(id  _Nullable x) {
+        NSLog(@"datas %@",x);
+        NSLog(@"rac_sequence.signal  thread %@",[NSThread currentThread]);
+        FlagItem *item = [FlagItem itemWithDict:x];
+        [items addObject:item];
+    } completed:^{
+        NSLog(@"rac_sequence.signal completed thread %@",[NSThread currentThread]);
+        //NSLog(@"items %@",items);
+    }];
+    
+   items = [[datas.rac_sequence map:^id _Nullable(id  _Nullable value) {
+         NSLog(@"rac_sequence.signal completed thread %@",[NSThread currentThread]);
+        return [FlagItem itemWithDict:value];
+       
+    }] array];
+    
+     NSLog(@"datas rac_sequence map %@",items);
+
+}
+
+- (void)test4 {
+    NSDictionary *dict = @{
+                           @"name":@"zzb",
+                           @"age" :@18
+                           };
+    // RACTuple 元祖
+    [dict.rac_sequence.signal subscribeNext:^(RACTuple *  _Nullable x) {
+        NSLog(@"test4 rac_sequence.signal thread %@",[NSThread currentThread]);
+        NSLog(@"items %@",x);
+        RACTupleUnpack(NSString *key,id value) = x;
+        NSLog(@"key %@",key);
+        NSLog(@"value %@",value);
+    }];
+}
 
 @end

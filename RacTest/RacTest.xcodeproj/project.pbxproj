@@ -15,6 +15,8 @@
 		FF041DD122B394B50023867D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FF041DCF22B394B50023867D /* LaunchScreen.storyboard */; };
 		FF041DD422B394B50023867D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FF041DD322B394B50023867D /* main.m */; };
 		FF07574122B786D600F734FD /* TestView.m in Sources */ = {isa = PBXBuildFile; fileRef = FF07574022B786D600F734FD /* TestView.m */; };
+		FF3DDE5522B8889000A43853 /* flags.plist in Resources */ = {isa = PBXBuildFile; fileRef = FF3DDE5422B8888F00A43853 /* flags.plist */; };
+		FF3DDE5822B8897800A43853 /* FlagItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FF3DDE5722B8897800A43853 /* FlagItem.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +35,9 @@
 		FF041DD322B394B50023867D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		FF07573F22B786D600F734FD /* TestView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestView.h; sourceTree = "<group>"; };
 		FF07574022B786D600F734FD /* TestView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestView.m; sourceTree = "<group>"; };
+		FF3DDE5422B8888F00A43853 /* flags.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = flags.plist; sourceTree = "<group>"; };
+		FF3DDE5622B8897800A43853 /* FlagItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FlagItem.h; sourceTree = "<group>"; };
+		FF3DDE5722B8897800A43853 /* FlagItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FlagItem.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +90,7 @@
 		FF041DC322B394B30023867D /* RacTest */ = {
 			isa = PBXGroup;
 			children = (
+				FF3DDE5422B8888F00A43853 /* flags.plist */,
 				FF041DC422B394B30023867D /* AppDelegate.h */,
 				FF041DC522B394B30023867D /* AppDelegate.m */,
 				FF041DC722B394B30023867D /* ViewController.h */,
@@ -96,6 +102,8 @@
 				FF041DD322B394B50023867D /* main.m */,
 				FF07573F22B786D600F734FD /* TestView.h */,
 				FF07574022B786D600F734FD /* TestView.m */,
+				FF3DDE5622B8897800A43853 /* FlagItem.h */,
+				FF3DDE5722B8897800A43853 /* FlagItem.m */,
 			);
 			path = RacTest;
 			sourceTree = "<group>";
@@ -161,6 +169,7 @@
 			files = (
 				FF041DD122B394B50023867D /* LaunchScreen.storyboard in Resources */,
 				FF041DCE22B394B50023867D /* Assets.xcassets in Resources */,
+				FF3DDE5522B8889000A43853 /* flags.plist in Resources */,
 				FF041DCC22B394B30023867D /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -216,6 +225,7 @@
 			files = (
 				FF07574122B786D600F734FD /* TestView.m in Sources */,
 				FF041DC922B394B30023867D /* ViewController.m in Sources */,
+				FF3DDE5822B8897800A43853 /* FlagItem.m in Sources */,
 				FF041DD422B394B50023867D /* main.m in Sources */,
 				FF041DC622B394B30023867D /* AppDelegate.m in Sources */,
 			);
