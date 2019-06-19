@@ -17,12 +17,25 @@
 @end
 
 @implementation ViewController
++ (instancetype)allocWithZone:(struct _NSZone *)zone {
+   ViewController *vc  = [super allocWithZone:zone];
+    [[vc rac_signalForSelector:@selector(viewDidLoad)] subscribeNext:^(RACTuple * _Nullable x) {
+        NSLog(@" rac_signalForSelector viewDidLoad");
+    }];
+    return vc;
+}
+
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    // 监听方法有没有执行 rac_signalForSelector
+    [[self rac_signalForSelector:@selector(viewDidLayoutSubviews)] subscribeNext:^(RACTuple * _Nullable x) {
+        NSLog(@" rac_signalForSelector viewDidLayoutSubviews");
+    }];
     
     TestView *testView = [[TestView alloc] init];
     testView.backgroundColor = [UIColor redColor];
