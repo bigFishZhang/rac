@@ -14,38 +14,94 @@
 @interface ViewController ()
 @property (weak, nonatomic) IBOutlet UIButton *TestButton;
 
+/** <#assign属性注释#> */
+@property (nonatomic, assign) int age;
+
 @end
 
 @implementation ViewController
-+ (instancetype)allocWithZone:(struct _NSZone *)zone {
-   ViewController *vc  = [super allocWithZone:zone];
-    [[vc rac_signalForSelector:@selector(viewDidLoad)] subscribeNext:^(RACTuple * _Nullable x) {
-        NSLog(@" rac_signalForSelector viewDidLoad");
-    }];
-    return vc;
+//+ (instancetype)allocWithZone:(struct _NSZone *)zone {
+//   ViewController *vc  = [super allocWithZone:zone];
+//    [[vc rac_signalForSelector:@selector(viewDidLoad)] subscribeNext:^(RACTuple * _Nullable x) {
+//        NSLog(@" rac_signalForSelector viewDidLoad");
+//    }];
+//    return vc;
+//}
+//
+//- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+//    self.age ++;
+//}
+
+- (void)loadUserData {
+    NSLog(@"loadUserData");
 }
 
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    
+- (void)loadGoodsData {
+    NSLog(@"loadGoodsData");
 }
 
+- (void)updateUI:(id)user goods:(id)goods{
+    NSLog(@"%@%@",user,goods);
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    // 监听方法有没有执行 rac_signalForSelector
-    [[self rac_signalForSelector:@selector(viewDidLayoutSubviews)] subscribeNext:^(RACTuple * _Nullable x) {
-        NSLog(@" rac_signalForSelector viewDidLayoutSubviews");
-    }];
     
-    TestView *testView = [[TestView alloc] init];
-    testView.backgroundColor = [UIColor redColor];
-    testView.frame = CGRectMake(10, 10, 200, 200);
-    [self.view addSubview:testView];
-    RACSubject *subject = [RACSubject subject] ;
-    [subject subscribeNext:^(id  _Nullable x) {
-        NSLog(@"subscribeNext %@",x);
+    RACSignal *userSiganl = [RACSignal createSignal:^RACDisposable * _Nullable(id<RACSubscriber>  _Nonnull subscriber) {
+        [subscriber sendNext:@"userSiganl"];
+        return nil;
     }];
-    testView.subject = subject;
+    RACSignal *goodsSiganl = [RACSignal createSignal:^RACDisposable * _Nullable(id<RACSubscriber>  _Nonnull subscriber) {
+        [subscriber sendNext:@"goodsSiganl"];
+        return nil;
+    }];
+    // 有几个信号必须要几个参数
+    [self rac_liftSelector:@selector(updateUI:goods:) withSignalsFromArray:@[userSiganl,goodsSiganl]];
+    
+//    //KVO
+//    [RACObserve(self, age) subscribeNext:^(id  _Nullable x) {
+//        NSLog(@" age %@",x);
+//    }];
+//    //监听事件
+//    [[self.TestButton rac_signalForControlEvents:UIControlEventTouchUpInside] subscribeNext:^(__kindof UIControl * _Nullable x) {
+//        NSLog(@"x UIControlEventTouchUpInside %@",x);
+//    }];
+//    //监听通知  不用管理订阅者 会自动删除
+//    /*
+//     return [RACDisposable disposableWithBlock:^{
+//     [self removeObserver:observer];
+//     }];
+//     */
+//    [[[NSNotificationCenter defaultCenter] rac_addObserverForName:@"note" object:nil] subscribeNext:^(NSNotification * _Nullable x) {
+//        NSLog(@"rac_addObserverForName %@",x);
+//    }];;
+//
+//
+//    [[NSNotificationCenter defaultCenter] postNotificationName:@"note" object:nil];
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    // 监听方法有没有执行 rac_signalForSelector
+//    [[self rac_signalForSelector:@selector(viewDidLayoutSubviews)] subscribeNext:^(RACTuple * _Nullable x) {
+//        NSLog(@" rac_signalForSelector viewDidLayoutSubviews");
+//    }];
+//
+//    TestView *testView = [[TestView alloc] init];
+//    testView.backgroundColor = [UIColor redColor];
+//    testView.frame = CGRectMake(10, 10, 200, 200);
+//    [self.view addSubview:testView];
+//    RACSubject *subject = [RACSubject subject] ;
+//    [subject subscribeNext:^(id  _Nullable x) {
+//        NSLog(@"subscribeNext %@",x);
+//    }];
+//    testView.subject = subject;
     
 //    _TestButton.rac_command = [[RACCommand alloc] initWithSignalBlock:^RACSignal * _Nonnull(id  _Nullable input) {
 //
@@ -61,17 +117,17 @@
 //    [_TestButton.rac_command.executionSignals.switchToLatest subscribeNext:^(id  _Nullable x) {
 //        NSLog(@"点击了按钮。。。 %@",x);
 //    }];
-    RACSubject *enableSignal = [RACSubject subject];
-    
-    _TestButton.rac_command =  [[RACCommand alloc] initWithEnabled:enableSignal signalBlock:^RACSignal * _Nonnull(id  _Nullable input) {
-                NSLog(@"  initWithSignalBlock 点击按钮 %@",input);
-        
-                return [RACSignal createSignal:^RACDisposable * _Nullable(id<RACSubscriber>  _Nonnull subscriber) {
-                    [subscriber sendNext:@"xxxx"];
-                    [subscriber sendCompleted];
-                    return  nil;
-                }];
-    }];
+//    RACSubject *enableSignal = [RACSubject subject];
+//
+//    _TestButton.rac_command =  [[RACCommand alloc] initWithEnabled:enableSignal signalBlock:^RACSignal * _Nonnull(id  _Nullable input) {
+//                NSLog(@"  initWithSignalBlock 点击按钮 %@",input);
+//
+//                return [RACSignal createSignal:^RACDisposable * _Nullable(id<RACSubscriber>  _Nonnull subscriber) {
+//                    [subscriber sendNext:@"xxxx"];
+//                    [subscriber sendCompleted];
+//                    return  nil;
+//                }];
+//    }];
     
 //    [enableSignal sendNext:@NO];
     
@@ -137,7 +193,7 @@
 //    [self test2];
 //    [self test3];
 //    [self test4];
-    [self test5];
+//    [self test5];
     // Do any additional setup after loading the view.
 }
 
