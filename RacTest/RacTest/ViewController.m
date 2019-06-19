@@ -12,6 +12,7 @@
 #import "FlagItem.h"
 
 @interface ViewController ()
+@property (weak, nonatomic) IBOutlet UIButton *TestButton;
 
 @end
 
@@ -33,58 +34,97 @@
     }];
     testView.subject = subject;
     
+//    _TestButton.rac_command = [[RACCommand alloc] initWithSignalBlock:^RACSignal * _Nonnull(id  _Nullable input) {
+//
+//        NSLog(@"  initWithSignalBlock 点击按钮 %@",input);
+//
+//        return [RACSignal createSignal:^RACDisposable * _Nullable(id<RACSubscriber>  _Nonnull subscriber) {
+//            [subscriber sendNext:@"xxxx"];
+//            [subscriber sendCompleted];
+//            return  nil;
+//        }];
+//    }];
+//
+//    [_TestButton.rac_command.executionSignals.switchToLatest subscribeNext:^(id  _Nullable x) {
+//        NSLog(@"点击了按钮。。。 %@",x);
+//    }];
+    RACSubject *enableSignal = [RACSubject subject];
     
-    
-    
-    
-    
-    
-    
-    
-    
-    NSLog(@"1 RACSignal *signal");
-    RACSignal *signal = [RACSignal createSignal:^RACDisposable * _Nullable(id<RACSubscriber>  _Nonnull subscriber) {
+    _TestButton.rac_command =  [[RACCommand alloc] initWithEnabled:enableSignal signalBlock:^RACSignal * _Nonnull(id  _Nullable input) {
+                NSLog(@"  initWithSignalBlock 点击按钮 %@",input);
         
-        NSLog(@"3 createSignal");
-        
-        [subscriber sendNext:@2];
-        [subscriber sendCompleted];
-        return [RACDisposable disposableWithBlock:^{
-            //订阅者销毁的时候执行
-            //订阅者发送完成或者error 也会执行block
-            //清空数据
-            NSLog(@"5 disposableWithBlock");
-        }];
+                return [RACSignal createSignal:^RACDisposable * _Nullable(id<RACSubscriber>  _Nonnull subscriber) {
+                    [subscriber sendNext:@"xxxx"];
+                    [subscriber sendCompleted];
+                    return  nil;
+                }];
     }];
     
+//    [enableSignal sendNext:@NO];
     
     
-    NSLog(@"2 signal subscribeNext");
-    [signal subscribeNext:^(id  _Nullable x) {
-        NSLog(@"4 subscribeNext");
-        NSLog(@"subscribeNext thread %@",[NSThread currentThread]);
-    }];
     
-    [signal subscribeError:^(NSError * _Nullable error) {
-        NSLog(@"subscribeError");
-    }];
-    [signal subscribeCompleted:^{
-        NSLog(@"subscribeCompleted");
-    }];
+//    NSLog(@"1 RACSignal *signal");
+//    // 创建 RACDynamicSignal
+//    RACSignal *signal = [RACSignal createSignal:^RACDisposable * _Nullable(id<RACSubscriber>  _Nonnull subscriber) {
+//
+//        NSLog(@"3 createSignal");
+//
+//        [subscriber sendNext:@2];
+//        [subscriber sendCompleted];
+//        return [RACDisposable disposableWithBlock:^{
+//            //订阅者销毁的时候执行
+//            //订阅者发送完成或者error 也会执行block
+//            //清空数据
+//            NSLog(@"5 disposableWithBlock");
+//
+//        }];
+//    }];
+//
     
-    [signal subscribeNext:^(id  _Nullable x) {
-        
-    } error:^(NSError * _Nullable error) {
-        
-    } completed:^{
-        
-    }];
+    
+//    NSLog(@"2 signal subscribeNext");
+//    [signal subscribeNext:^(id  _Nullable x) {
+//        NSLog(@"4 subscribeNext");
+//        NSLog(@"subscribeNext thread %@",[NSThread currentThread]);
+//    }];
+//
+//    [signal subscribeError:^(NSError * _Nullable error) {
+//        NSLog(@"subscribeError");
+//    }];
+//    [signal subscribeCompleted:^{
+//        NSLog(@"subscribeCompleted");
+//    }];
+//
+//    [signal subscribeNext:^(id  _Nullable x) {
+//
+//    } error:^(NSError * _Nullable error) {
+//
+//    } completed:^{
+//
+//    }];
+    
+    //racsignal 转
+//    RACMulticastConnection *connection = [signal publish];
+//
+//    [connection.signal subscribeNext:^(id  _Nullable x) {
+//        NSLog(@"connection.signal subscribeNext 1 %@ ",x);
+//    }];
+//
+//    [connection.signal subscribeNext:^(id  _Nullable x) {
+//        NSLog(@"connection.signal subscribeNext 2 %@ ",x);
+//    }];
+//
+    // 进行连接
+    //racsubjec 订阅signal
+//    [connection connect];
     
     
 //    [self test];
 //    [self test2];
 //    [self test3];
-    [self test4];
+//    [self test4];
+    [self test5];
     // Do any additional setup after loading the view.
 }
 
@@ -179,4 +219,54 @@
     }];
 }
 
+
+
+
+/**
+ test raccommand
+ */
+- (void)test5 {
+    RACCommand *command = [[RACCommand alloc] initWithSignalBlock:^RACSignal * _Nonnull(id  _Nullable input) {
+        NSLog(@"initWithSignalBlock %@ ",input);
+        
+        return [RACSignal createSignal:^RACDisposable * _Nullable(id<RACSubscriber>  _Nonnull subscriber) {
+            
+            
+            
+            
+            //发送信号给订阅者 =》 RACReplaySubject
+            [subscriber sendNext:@"subscriber sendNext"];
+            
+            [subscriber sendCompleted];
+            
+            
+            return [RACDisposable disposableWithBlock:^{
+                
+            }];
+        }];
+    }];
+    NSLog(@"RACCommand execute");
+    // 信号中的信号 switchToLatest获取最近发送的信号
+    [command.executionSignals.switchToLatest subscribeNext:^(id  _Nullable x) {
+        NSLog(@"executionSignals.switchToLatest x %@",x);
+    }];
+    
+    //执行有没有完成的
+    [[command.executing skip:1] subscribeNext:^(NSNumber * _Nullable x) {
+        BOOL isExecuting = [x boolValue];
+        if (isExecuting) {
+            NSLog(@"正在执行。。。");
+        }else{
+            NSLog(@"执行完成。。。");
+        }
+    }];//忽略第一次
+   
+    
+    
+    //创建了RACReplaySubject 订阅 initWithSignalBlock 里面返回的信号
+    [command execute:@1]; //返回 RACReplaySubject
+    
+  
+    
+}
 @end
